@@ -1,6 +1,7 @@
 
 
-require('dotenv').config()
+require('dotenv').config();
+require('newrelic');
 
 const express = require('express');
 const path = require('path');
