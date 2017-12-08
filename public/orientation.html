@@ -33,7 +33,7 @@
         
         var socket = io();
         function handleOrientation(event) {
-            socket.emit('orientation', [event.alpha, event.beta, event.gamma]);
+            socket.emit('orientation', event);
 
             var absolute = event.absolute;
             var alpha    = event.alpha;
