@@ -103,6 +103,10 @@ io.on('connection', function (socket) {
       console.log('message: ' + msg);      
       io.emit('chat message', msg);
     });
+
+    socket.on( 'orientation', function(orientation) {
+      console.log( orientation )
+    });
   });
 
 // twitter setup
