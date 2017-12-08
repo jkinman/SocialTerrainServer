@@ -4,7 +4,7 @@
     <title>Social Terrain Remote</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
+      body { font: 24px Helvetica, Arial; }
       form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
       form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
       form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
@@ -13,12 +13,20 @@
       #messages li:nth-child(odd) { background: #eee; }
     </style>
   </head>
+
   <body>
       <h1>Device Orientation</h1>
       <span id="x"></span>
+      <br/>
       <span id="y"></span>
-      <span id="x"></span>
+      <br/>
+      <span id="z"></span>
+      <br/>
       <span id="abs"></span>
+      <br/>
+      <br/>
+      <br/>
+      <span id="motion"></span>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
@@ -31,11 +39,12 @@
             $("#x").html("alpha: " + alpha);
             $("#y").html("beta: " + beta);
             $("#z").html("gamma: " + gamma);
-            $("#x").html("alpha: " + alpha);
+            $("#abs").html("alpha: " + absolute);
         }
 
         function handleMotion(event) {
-
+            var rotationRate = [event.DeviceRotationRate.alpha, event.DeviceRotationRate.beta, event.DeviceRotationRate.gamma];
+            $("#motion").html( rotationRate );
         }
 
       $(function () {
