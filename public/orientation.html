@@ -28,11 +28,10 @@
         var alpha    = event.alpha;
         var beta     = event.beta;
         var gamma    = event.gamma;
-            $("#x").text = "alpha: " + alpha;
-            $("#y").text = "beta: " + beta;
-            $("#z").text = "gamma: " + gamma;
-            $("#x").text = "alpha: " + alpha;
-
+            $("#x").html("alpha: " + alpha);
+            $("#y").html("beta: " + beta);
+            $("#z").html("gamma: " + gamma);
+            $("#x").html("alpha: " + alpha);
         }
 
         function handleMotion(event) {
