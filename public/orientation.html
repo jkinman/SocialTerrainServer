@@ -33,12 +33,19 @@
         
         var socket = io();
         function handleOrientation(event) {
-            socket.emit('orientation', JSON.stringify(event));
+
+            socket.emit('orientation', {
+                alpha:event.alpha, 
+                beta:event.beta, 
+                gamma:event.gamma, 
+            }
+            );
 
             var absolute = event.absolute;
             var alpha    = event.alpha;
             var beta     = event.beta;
             var gamma    = event.gamma;
+
             $("#x").html("alpha: " + (alpha - 180));
             $("#y").html("beta: " + beta);
             $("#z").html("gamma: " + (-gamma));
