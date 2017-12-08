@@ -105,6 +105,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on( 'orientation', function(orientation) {
+      io.emit( 'orientation', orientation);
       console.log( orientation )
     });
   });
