@@ -22,8 +22,12 @@ app.locals.ENV = env;
 app.locals.ENV_DEVELOPMENT = env == 'development';
 
 app.get('/', function (req, res) {
-    res.sendfile(__dirname + '/index.html');
-  });
+  res.sendfile(__dirname + '/index.html');
+});
+
+app.get('/remote', function (req, res) {
+  res.sendfile(__dirname + '/public/orientation.html');
+});
 
 // view engine setup
 
