@@ -22,9 +22,11 @@
       <br/>
       <span id="z"></span>
       <br/>
-      <span id="abs"></span>
+      <span id="alpha"></span>
       <br/>
       <br/>
+      <br/>
+      <span id="orientation"></span>
       <br/>
       <span id="motion"></span>
     <script src="/socket.io/socket.io.js"></script>
@@ -50,11 +52,13 @@
             $("#x").html("alpha: " + (alpha - 180));
             $("#y").html("beta: " + beta);
             $("#z").html("gamma: " + (-gamma));
-            $("#abs").html("alpha: " + absolute);
+            $("#alpha").html("alpha: " + absolute);
         }
 
         function orientationChange(event) {
             socket.emit('orientationChange', window.orientation || 0);
+            $("#orientation").html("orientation:" + window.orientation);
+            
         }
 
         function handleMotion(event) {
