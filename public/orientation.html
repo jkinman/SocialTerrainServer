@@ -26,7 +26,7 @@
       <br/>
       <br/>
       <br/>
-      <span id="orientation"></span>
+      <span id="orientation">orientation</span>
       <br/>
       <span id="motion"></span>
     <script src="/socket.io/socket.io.js"></script>
@@ -67,6 +67,7 @@
         }
 
       $(function () {
+        $("#orientation").html("orientation:" + window.orientation);
         window.addEventListener("orientationchange", orientationChange, true);
         if (window.DeviceOrientationEvent) {
             window.addEventListener("deviceorientation", handleOrientation, true);
