@@ -113,8 +113,8 @@ io.on('connection', function (socket) {
       io.emit( 'orientation', orientation);
     });
 
-    socket.on( 'screenorientation', function(orientation) {
-      io.emit( 'screenorientation', orientation);
+    socket.on( 'screenrotation', function(orientation) {
+      io.emit( 'screenrotation', orientation);
     });
 
   });

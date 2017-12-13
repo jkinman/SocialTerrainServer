@@ -56,7 +56,7 @@
         }
 
         function orientationChange(event) {
-            socket.emit('orientationChange', {direction:window.orientation});
+            socket.emit('screenrotation', {direction:window.orientation});
             $("#orientation").html("orientation:" + window.orientation);
             
         }
