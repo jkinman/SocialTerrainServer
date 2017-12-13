@@ -29,6 +29,10 @@ app.get('/remote', function (req, res) {
   res.sendfile(__dirname + '/public/orientation.html');
 });
 
+app.get('/app', function (req, res) {
+  res.sendfile(__dirname + '/app/index.html');
+});
+
 // view engine setup
 
 app.set('views', path.join(__dirname, 'views'));
@@ -41,6 +45,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'app')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'node_modules')));
 
@@ -106,7 +111,6 @@ io.on('connection', function (socket) {
 
     socket.on( 'orientation', function(orientation) {
       io.emit( 'orientation', orientation);
-      console.log( orientation )
     });
   });
 

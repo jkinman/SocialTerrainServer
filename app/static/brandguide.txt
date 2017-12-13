@@ -1,0 +1,6 @@
+Main text Font: Liberator Medium
+Main Font Color HEX: #0c020a
+Slogan Text Font: Avenir
+Slogan Font Color HEX: #b32aa1
+Symbol Color HEX: #0c020a
+Container Color HEX: #fff
