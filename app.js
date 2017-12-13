@@ -112,6 +112,11 @@ io.on('connection', function (socket) {
     socket.on( 'orientation', function(orientation) {
       io.emit( 'orientation', orientation);
     });
+
+    socket.on( 'screenorientation', function(orientation) {
+      io.emit( 'screenorientation', orientation);
+    });
+
   });
 
 // twitter setup

@@ -53,13 +53,17 @@
             $("#abs").html("alpha: " + absolute);
         }
 
+        function orientationChange(event) {
+            socket.emit('orientationChange', window.orientation || 0);
+        }
+
         function handleMotion(event) {
             var rotationRate = [event.DeviceRotationRate.alpha, event.DeviceRotationRate.beta, event.DeviceRotationRate.gamma];
             $("#motion").html( rotationRate );
         }
 
       $(function () {
-
+        window.addEventListener("orientationchange", orientationChange, true);
         if (window.DeviceOrientationEvent) {
             window.addEventListener("deviceorientation", handleOrientation, true);
         } else if (window.DeviceMotionEvent) {
