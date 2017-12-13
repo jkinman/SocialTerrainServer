@@ -114,6 +114,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on( 'screenrotation', function(orientation) {
+      console.log( 'screenrotation:' + orientation.direction )
       io.emit( 'screenrotation', orientation);
     });
 
