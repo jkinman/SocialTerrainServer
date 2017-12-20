@@ -93,10 +93,20 @@ app.set('port', process.env.PORT || 3000);
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-io.on('connection', function (socket) {
-  console.log('a user connected');
+let connections = [];
 
-  socket.emit('news', { hello: 'world' });
+io.on('connection', function (socket) {
+  console.log('a user connected - ' + socket.id);
+  connections = [socket.id];
+  var clients = io.sockets.clients();
+
+  for (var idKey in clients.connected) {
+    if( idKey !== socket.id){
+      clients.connected[idKey].disconnect();
+    }
+  }
+  
+  // socket.emit('news', { hello: 'world' });
     socket.on('my other event', function (data) {
       console.log(data.text);
     });
@@ -105,7 +115,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('chat message', function(msg){
-      console.log('message: ' + msg);      
+      console.log('message: ' + msg);
       io.emit('chat message', msg);
     });
 
@@ -114,7 +124,6 @@ io.on('connection', function (socket) {
     });
 
     socket.on( 'screenrotation', function(orientation) {
-      console.log( 'screenrotation:' + orientation.direction )
       io.emit( 'screenrotation', orientation);
     });
 
@@ -140,7 +149,8 @@ var client = new Twitter({
  });
    
   stream.on('error', function(error) {
-    throw error;
+    console.log( error );
+    // throw error;
   });
 
 server.listen(app.get('port'));
