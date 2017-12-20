@@ -100,11 +100,12 @@ io.on('connection', function (socket) {
   connections = [socket.id];
   var clients = io.sockets.clients();
 
-  for (var idKey in clients.connected) {
-    if( idKey !== socket.id){
-      clients.connected[idKey].disconnect();
-    }
-  }
+  // for (var idKey in clients.connected) {
+  //   if( idKey !== socket.id){
+  //     console.log( 'idKey:'+idKey+ "   socket.id:"+socket.id)
+  //     clients.connected[idKey].disconnect();
+  //   }
+  // }
   
   // socket.emit('news', { hello: 'world' });
     socket.on('my other event', function (data) {
