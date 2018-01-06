@@ -144,8 +144,13 @@ var client = new Twitter({
     console.log(event);
     var dataPacket = {profile: event.user.profile_image_url, 
         text: event.text, 
-        desc: event.user.description, 
-        handle: event.user.screen_name };
+        desc: event.user.description,
+        user: event.user,
+        entities: event.entities,
+        handle: event.user.screen_name,
+        retweet_count: event.retweet_count,
+        favorite_count: event.favorite_count,
+      };
     io.emit('twitter', JSON.stringify(dataPacket));
  });
    
