@@ -149,7 +149,7 @@ var client = new Twitter({
         entities: event.entities,
         handle: event.user.screen_name,
         retweet_count: event.retweet_count,
-        favorite_count: event.favorite_count,
+        favorite_count: event.favorite_count
       };
     io.emit('twitter', JSON.stringify(dataPacket));
  });
