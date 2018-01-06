@@ -141,7 +141,7 @@ var client = new Twitter({
 
   var stream = client.stream('statuses/filter', {track: 'vancouver'});
   stream.on('data', function(event) {
-    console.log(event);
+    console.log(event.text);
     var dataPacket = {profile: event.user.profile_image_url, 
         text: event.text, 
         desc: event.user.description,
