@@ -139,6 +139,10 @@
         
         var socket = io();
         
+        window.addEventListener( 'onclick', function(event) {
+          socket.emit('remoteMessage', {event:'fullscreenclick'});
+        } )
+
         function handleOrientation(event) {
             socket.on('disconnect', () => $("#display").html("Disconnected"));
             socket.emit('orientation', {

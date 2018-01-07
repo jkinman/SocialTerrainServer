@@ -124,6 +124,10 @@ io.on('connection', function (socket) {
       io.emit( 'orientation', orientation);
     });
 
+    socket.on( 'remoteMessage', function(data) {
+      io.emit( 'remoteMessage', data);
+    });
+
     socket.on( 'screenrotation', function(orientation) {
       io.emit( 'screenrotation', orientation);
     });
