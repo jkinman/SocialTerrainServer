@@ -97,6 +97,7 @@ let connections = [];
 
 io.on('connection', function (socket) {
   console.log('a user connected - ' + socket.id);
+  console.log(socket)
   connections = [socket.id];
   var clients = io.sockets.clients();
 
@@ -132,7 +133,40 @@ io.on('connection', function (socket) {
       io.emit( 'screenrotation', orientation);
     });
 
+    var params = {
+      screen_name: 'CPyvr',
+      q: '#CPyvr CPyvr',
+      count: 50,
+      include_entities: true,
+    };
+    client.get('statuses/user_timeline', params, setTwitterBackLog);
+  
   });
+
+
+  sendTwitterBacklog = (error, tweets, response) => {
+    if (!error) {
+      tweets.map( (event) => {
+        var dataPacket = {profile: event.user.profile_image_url, 
+          text: event.text, 
+          desc: event.user.description,
+          user: event.user,
+          entities: event.entities,
+          handle: event.user.screen_name,
+          retweet_count: event.retweet_count,
+          favorite_count: event.favorite_count
+        };
+
+        io.emit('twitter', JSON.stringify(dataPacket));
+        
+      })
+  
+    }
+    else {
+      console.log( error )
+      console.log( 'error')
+    }
+  }
 
 // twitter setup
 var twitterStream;
@@ -143,7 +177,7 @@ var client = new Twitter({
     access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
   });
 
-  var stream = client.stream('statuses/filter', {track: 'vancouver'});
+  var stream = client.stream('statuses/filter', {track: 'CPyvr'});
   stream.on('data', function(event) {
     console.log(event.text);
     var dataPacket = {profile: event.user.profile_image_url, 
@@ -157,7 +191,7 @@ var client = new Twitter({
       };
     io.emit('twitter', JSON.stringify(dataPacket));
  });
-   
+
   stream.on('error', function(error) {
     console.log( error );
     // throw error;
