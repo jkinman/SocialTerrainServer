@@ -144,9 +144,9 @@ io.on('connection', function (socket) {
   });
 
 
-  sendTwitterBacklog = (error, tweets, response) => {
+  sendTwitterBacklog = function(error, tweets, response) {
     if (!error) {
-      tweets.map( (event) => {
+      tweets.map( function(event) {
         var dataPacket = {profile: event.user.profile_image_url, 
           text: event.text, 
           desc: event.user.description,
