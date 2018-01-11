@@ -97,7 +97,7 @@ let connections = [];
 
 io.on('connection', function (socket) {
   console.log('a user connected - ' + socket.id);
-  console.log(socket)
+  // console.log(socket)
   connections = [socket.id];
   var clients = io.sockets.clients();
 
@@ -156,7 +156,7 @@ io.on('connection', function (socket) {
           retweet_count: event.retweet_count,
           favorite_count: event.favorite_count
         };
-
+        console.log( `sending backlog: ${event.user.description}`)
         io.emit('twitter', JSON.stringify(dataPacket));
         
       })
