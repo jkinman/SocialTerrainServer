@@ -164,7 +164,12 @@ io.on('connection', function (socket) {
       include_entities: true,
     };
     
-    client.get('statuses/user_timeline', params, (error, tweets, response)=>console.log(response));
+    client.get('statuses/user_timeline', params, (error, tweets, response)=>{
+      console.log(tweets)
+      if(!error){
+        console.log( Array.isArray(tweets))
+      }
+    });
   
   });
 
