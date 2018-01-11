@@ -95,6 +95,30 @@ var io = require('socket.io')(server);
 
 let connections = [];
 
+var sendTwitterBacklog = function(error, tweets, response) {
+  if (!error) {
+    tweets.map( function(event) {
+      var dataPacket = {profile: event.user.profile_image_url, 
+        text: event.text, 
+        desc: event.user.description,
+        user: event.user,
+        entities: event.entities,
+        handle: event.user.screen_name,
+        retweet_count: event.retweet_count,
+        favorite_count: event.favorite_count
+      };
+      console.log( `sending backlog: ${event.user.description}`)
+      io.emit('twitter', JSON.stringify(dataPacket));
+      
+    })
+
+  }
+  else {
+    console.log( error )
+    console.log( 'error')
+  }
+}
+
 io.on('connection', function (socket) {
   console.log('a user connected - ' + socket.id);
   // console.log(socket)
@@ -142,31 +166,6 @@ io.on('connection', function (socket) {
     client.get('statuses/user_timeline', params, setTwitterBackLog);
   
   });
-
-
-  sendTwitterBacklog = function(error, tweets, response) {
-    if (!error) {
-      tweets.map( function(event) {
-        var dataPacket = {profile: event.user.profile_image_url, 
-          text: event.text, 
-          desc: event.user.description,
-          user: event.user,
-          entities: event.entities,
-          handle: event.user.screen_name,
-          retweet_count: event.retweet_count,
-          favorite_count: event.favorite_count
-        };
-        console.log( `sending backlog: ${event.user.description}`)
-        io.emit('twitter', JSON.stringify(dataPacket));
-        
-      })
-  
-    }
-    else {
-      console.log( error )
-      console.log( 'error')
-    }
-  }
 
 // twitter setup
 var twitterStream;
