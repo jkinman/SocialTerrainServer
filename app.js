@@ -28,9 +28,10 @@ app.get('/', function (req, res) {
 app.get('/remote', function (req, res) {
   res.sendfile(__dirname + '/public/orientation.html');
 });
-
+let userDefinedTwitterSearch;
 app.get('/app', function (req, res) {
   res.sendfile(__dirname + '/app/index.html');
+  userDefinedTwitterSearch = req.query.ts;
 });
 
 // view engine setup
@@ -95,31 +96,6 @@ var io = require('socket.io')(server);
 
 let connections = [];
 
-// let sendTwitterBacklog = function(error, tweets, response) {
-//   if (!error) {
-//     console.log(tweets)
-//     tweets.map( function(event) {
-//       var dataPacket = {profile: event.user.profile_image_url, 
-//         text: event.text, 
-//         desc: event.user.description,
-//         user: event.user,
-//         entities: event.entities,
-//         handle: event.user.screen_name,
-//         retweet_count: event.retweet_count,
-//         favorite_count: event.favorite_count
-//       };
-//       console.log( `sending backlog: ${event.user.description}`)
-//       io.emit('twitter', JSON.stringify(dataPacket));
-      
-//     })
-
-//   }
-//   else {
-//     console.log( error )
-//     console.log( 'error')
-//   }
-// }
-
 io.on('connection', function (socket) {
   console.log('a user connected - ' + socket.id);
   // console.log(socket)
@@ -160,15 +136,29 @@ io.on('connection', function (socket) {
 
     var params = {
       screen_name: 'CPyvr',
-      count: 15,
+      q: 'creative pulse #CPyvr OR #creativepulse from:CPyvr to:CPyvr @CPyvr since:2012-01-01',
+      count: 20,
       include_entities: true,
     };
-    
-    client.get('statuses/user_timeline', params, (error, tweets, response)=>{
-      if(!error && Array.isArray(tweets)){
-        io.emit('twitter', JSON.stringify(tweets));
-      }
-    });
+
+    // q=%23CPyvr%20OR%20%23creativepulse%20to%3ACPyvr%20%40CPyvr
+    // q=#CPyvr OR #creativepulse to:CPyvr @CPyvr
+    // client.get('statuses/user_timeline', params, (error, tweets, response)=>{
+
+      client.get('/search/tweets', params, (error, tweets, response)=>{
+        if(!error && Array.isArray(tweets) && tweets.length){
+          tweets.map((t)=> console.log(t.text ))
+          io.emit('twitter', JSON.stringify(tweets));
+        }
+        else if( ! tweets.length ) {
+          client.get('statuses/user_timeline', params, (error, tweets, response)=>{
+            if(!error && Array.isArray(tweets) && tweets.length){
+              tweets.map((t)=> console.log(t.text ))
+              io.emit('twitter', JSON.stringify(tweets)); 
+            }
+          })
+        }
+      })
   
   });
 
@@ -179,20 +169,11 @@ var client = new Twitter({
     consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
     access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
     access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
-  });
+});
 
   var stream = client.stream('statuses/filter', {track: 'CPyvr'});
   stream.on('data', function(event) {
     console.log(event.text);
-    // var dataPacket = {profile: event.user.profile_image_url, 
-    //     text: event.text, 
-    //     desc: event.user.description,
-    //     user: event.user,
-    //     entities: event.entities,
-    //     handle: event.user.screen_name,
-    //     retweet_count: event.retweet_count,
-    //     favorite_count: event.favorite_count
-    //   };
     io.emit('twitter', JSON.stringify(event));
  });
 
