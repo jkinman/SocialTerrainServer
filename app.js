@@ -166,8 +166,8 @@ io.on('connection', function (socket) {
     
     client.get('statuses/user_timeline', params, (error, tweets, response)=>{
       console.log(tweets)
-      if(!error){
-        console.log( Array.isArray(tweets))
+      if(!error && Array.isArray(tweets)){
+        io.emit('twitter', JSON.stringify(tweets));
       }
     });
   
