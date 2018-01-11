@@ -6,9 +6,9 @@
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 24px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      form { padding: 3px;  width: 100vw;  }
+      form input {  border: 0; padding: 10px; width: 100vw; height: 15vw; font-size:44px;}
+      form button { width: 100vw; height: 10vw; background: rgb(53, 123, 56); border: none; padding: 10px; font-size:44px;}
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
@@ -18,12 +18,9 @@
   background-color: #222;
   text-align: center;
 }
-#canvas, canvas {
-  width: 300px;
-  height: 300px;
-}
 
 .crt {
+  width: 100vw;
  letter-spacing: 1px;
  font-family: 'VT323', monospace;
  color: #95e208;
@@ -107,13 +104,18 @@
 
   <body>
 
-        <div id="monitor" class="crt">
-                <!-- <img
-                 class="background" 
-                 src="https://dl.dropboxusercontent.com/u/5318200/IMG_REFRESH.gif"/> -->
-                <pre class="content crt">
-                <div id="canvas"></div><br>
-                  <span id="display">Establishing Connection</span><br>
+    <div>
+      <form>
+        <label>MESSAGE BROADCAST</label>
+        <input type="text" id="message-broadcast" placeholder="click here to broadcast" />
+        <br>
+        <button type="button" onclick="sendMessage(this);">SEND</button>
+      </form>
+    </div>
+          <div id="monitor" class="crt">
+          <pre class="content crt">
+        
+            <span id="display">Establishing Connection</span><br>
                   ═══════════[†]═══════════<br><br><br>
                 <span class="message"></span>
                 <span id="x">x</span>
@@ -127,16 +129,22 @@
                 <span id="orientation">orientation</span>
                     
                 </pre>
-                <div class="foreground"></div>
+                <div class="foreground">
+                  
+                </div>
               </div>
       <span id="motion"></span>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script type="text/javascript" src="js/socket.io-client/dist/socket.io.slim.js" ></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r77/three.min.js"></script>
 
     <script>
         
+        function sendMessage( e ){
+          var message = $('#message-broadcast').val();
+          $('#message-broadcast').val('')
+          socket.emit('chat message', message );
+        }
         var socket = io();
         
         document.addEventListener( 'click', function(event) {
@@ -232,39 +240,37 @@ var container = $("#canvas");
 var canvasWidth = container.width();
 var canvasHeight = container.height();
 
-console.log(canvasWidth);
-
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 75, canvasWidth / canvasHeight, 0.1, 1000 );
+// var scene = new THREE.Scene();
+// var camera = new THREE.PerspectiveCamera( 75, canvasWidth / canvasHeight, 0.1, 1000 );
 
 // this creates a 3d rendering context and
 // a canvas
-var renderer = new THREE.WebGLRenderer( { alpha: true } );
-renderer.setSize( canvasWidth, canvasHeight );
-renderer.setClearColor( 0x000000, 0 );
+// var renderer = new THREE.WebGLRenderer( { alpha: true } );
+// renderer.setSize( canvasWidth, canvasHeight );
+// renderer.setClearColor( 0x000000, 0 );
 
 // the canvas is part of the renderer as a HTML DOM
 // element and needs to be appended in the DOM
-container.get(0).appendChild( renderer.domElement );
+// container.get(0).appendChild( renderer.domElement );
 
-var geometry = new THREE.SphereGeometry( 2, 12, 12 );
-var material = new THREE.MeshBasicMaterial({
-      color : 0x92ff38,
-      wireframe : true,
-      wireframeLinewidth: 2
-    });
-var cube = new THREE.Mesh( geometry, material );
-scene.add( cube );
+// var geometry = new THREE.SphereGeometry( 2, 12, 12 );
+// var material = new THREE.MeshBasicMaterial({
+//       color : 0x92ff38,
+//       wireframe : true,
+//       wireframeLinewidth: 2
+//     });
+// var cube = new THREE.Mesh( geometry, material );
+// scene.add( cube );
 
-camera.position.z = 5;
+// camera.position.z = 5;
 
-function render() {
-	requestAnimationFrame( render );
-  //cube.rotation.x += 0.02;
-  cube.rotation.y += 0.008;
-	renderer.render( scene, camera );
-}
-render();
+// function render() {
+// 	requestAnimationFrame( render );
+//   //cube.rotation.x += 0.02;
+//   cube.rotation.y += 0.008;
+// 	renderer.render( scene, camera );
+// }
+// render();
     </script>
   </body>
 </html>
