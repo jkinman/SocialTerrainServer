@@ -95,29 +95,30 @@ var io = require('socket.io')(server);
 
 let connections = [];
 
-var sendTwitterBacklog = function(error, tweets, response) {
-  if (!error) {
-    tweets.map( function(event) {
-      var dataPacket = {profile: event.user.profile_image_url, 
-        text: event.text, 
-        desc: event.user.description,
-        user: event.user,
-        entities: event.entities,
-        handle: event.user.screen_name,
-        retweet_count: event.retweet_count,
-        favorite_count: event.favorite_count
-      };
-      console.log( `sending backlog: ${event.user.description}`)
-      io.emit('twitter', JSON.stringify(dataPacket));
+// let sendTwitterBacklog = function(error, tweets, response) {
+//   if (!error) {
+//     console.log(tweets)
+//     tweets.map( function(event) {
+//       var dataPacket = {profile: event.user.profile_image_url, 
+//         text: event.text, 
+//         desc: event.user.description,
+//         user: event.user,
+//         entities: event.entities,
+//         handle: event.user.screen_name,
+//         retweet_count: event.retweet_count,
+//         favorite_count: event.favorite_count
+//       };
+//       console.log( `sending backlog: ${event.user.description}`)
+//       io.emit('twitter', JSON.stringify(dataPacket));
       
-    })
+//     })
 
-  }
-  else {
-    console.log( error )
-    console.log( 'error')
-  }
-}
+//   }
+//   else {
+//     console.log( error )
+//     console.log( 'error')
+//   }
+// }
 
 io.on('connection', function (socket) {
   console.log('a user connected - ' + socket.id);
@@ -159,11 +160,11 @@ io.on('connection', function (socket) {
 
     var params = {
       screen_name: 'CPyvr',
-      q: '#CPyvr CPyvr',
-      count: 50,
+      count: 15,
       include_entities: true,
     };
-    client.get('statuses/user_timeline', params, setTwitterBackLog);
+    
+    client.get('statuses/user_timeline', params, (error, tweets, response)=>console.log(response));
   
   });
 
