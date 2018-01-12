@@ -22,10 +22,18 @@ app.locals.ENV = env;
 app.locals.ENV_DEVELOPMENT = env == 'development';
 
 app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
+  res.sendfile(__dirname + '/public/orientation.html');
+});
+
+app.get('/a', function (req, res) {
+  res.sendfile(__dirname + '/app/index.html');
 });
 
 app.get('/remote', function (req, res) {
+  res.sendfile(__dirname + '/public/orientation.html');
+});
+
+app.get('/r', function (req, res) {
   res.sendfile(__dirname + '/public/orientation.html');
 });
 let userDefinedTwitterSearch;
