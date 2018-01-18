@@ -140,7 +140,6 @@ remoteChannel.on( 'connection', (socket) => {
     clientChannel.emit( 'remoteMessage', data);
   });
 
-  
   socket.on( 'screenrotation', function(orientation) {
     clientChannel.emit( 'screenrotation', orientation);
   });
@@ -206,18 +205,17 @@ var client = new Twitter({
     access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
 
-var stream;
 function recreateTwitterStream( searchTerm ) {
-  if( stream && stream.destroy) stream.destroy();
+  if( twitterStream && twitterStream.destroy) twitterStream.destroy();
 
   console.log( `MAKING TWITTER stream with: ${searchTerm}` );
-  stream = client.stream('statuses/filter', {track: searchTerm});
-  stream.on('data', function(event) {
+  twitterStream = client.stream('statuses/filter', {track: searchTerm});
+  twitterStream.on('data', (event) => {
     console.log(event.text);
     clientChannel.emit('twitter', JSON.stringify(event));
   });
   
-  stream.on('error', function(error) {
+  twitterStream.on('error', (error) => {
     console.log( error );
     // throw error;
   });
