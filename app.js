@@ -160,7 +160,7 @@ clientChannel.on('connection', function (socket) {
       console.log(data.text);
     });
     socket.on('disconnect', function(){
-      clientChannel.emit( 'stats', JSON.stringify(connections))
+      // clientChannel.emit( 'stats', )
       console.log('user disconnected');
     });
 
