@@ -145,7 +145,7 @@
           $('#message-broadcast').val('')
           socket.emit('chat message', message );
         }
-        var socket = io();
+        var socket = io('/remote');
         
         document.addEventListener( 'click', function(event) {
           socket.emit('remoteMessage', {event:'fullscreenclick'});
