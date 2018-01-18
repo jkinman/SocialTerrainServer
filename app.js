@@ -131,7 +131,7 @@ remoteChannel.on( 'connection', (socket) => {
   connections.remotes = [{uid, socket}];
   
   clientChannel.emit( 'newConnection', uid);
-  
+
   socket.on( 'orientation', function(orientation) {
     clientChannel.emit( 'orientation', orientation);
   });
@@ -208,9 +208,10 @@ var client = new Twitter({
 
 var stream;
 function recreateTwitterStream( searchTerm ) {
+  if( stream && stream.destroy) stream.destroy();
 
   console.log( `MAKING TWITTER stream with: ${searchTerm}` );
-  var stream = client.stream('statuses/filter', {track: searchTerm});
+  stream = client.stream('statuses/filter', {track: searchTerm});
   stream.on('data', function(event) {
     console.log(event.text);
     clientChannel.emit('twitter', JSON.stringify(event));
