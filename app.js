@@ -127,10 +127,11 @@ remoteChannel.on( 'connection', (socket) => {
   connections.remotes.map((item) => item.socket.disconnect(true))
 
   console.log( '----- A Remote client connected -----' );
-  let uid = randomString(4);
-  // connections.remotes.push({uid, socket});
+  let uid = randomString(4);;
   connections.remotes = [{uid, socket}];
-
+  
+  clientChannel.emit( 'newConnection', uid);
+  
   socket.on( 'orientation', function(orientation) {
     clientChannel.emit( 'orientation', orientation);
   });
@@ -139,6 +140,7 @@ remoteChannel.on( 'connection', (socket) => {
     clientChannel.emit( 'remoteMessage', data);
   });
 
+  
   socket.on( 'screenrotation', function(orientation) {
     clientChannel.emit( 'screenrotation', orientation);
   });
