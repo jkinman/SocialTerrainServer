@@ -16,34 +16,51 @@ const users = require('./routes/user');
 const app = express();
 
 const Twitter = require('twitter');
+const twitterStreamTrackingString = 'CPyvr,CPshowcase,creativepulse';
+
+let userDefinedTwitterSearch;
 
 const env = process.env.NODE_ENV || 'development';
 app.locals.ENV = env;
 app.locals.ENV_DEVELOPMENT = env == 'development';
 
 app.get('/', function (req, res) {
+  userDefinedTwitterSearch = req.query.ts ||  twitterStreamTrackingString;
   res.sendfile(__dirname + '/public/orientation.html');
 });
 
 app.get('/a', function (req, res) {
+  userDefinedTwitterSearch = req.query.ts ||  twitterStreamTrackingString;
   res.sendfile(__dirname + '/app/index.html');
 });
 
 app.get('/remote', function (req, res) {
+  userDefinedTwitterSearch = req.query.ts ||  twitterStreamTrackingString;
   res.sendfile(__dirname + '/public/orientation.html');
 });
 
 app.get('/r', function (req, res) {
+  userDefinedTwitterSearch = req.query.ts ||  twitterStreamTrackingString;
   res.sendfile(__dirname + '/public/orientation.html');
 });
-let userDefinedTwitterSearch;
+
 app.get('/app', function (req, res) {
+  userDefinedTwitterSearch = req.query.ts ||  twitterStreamTrackingString;
   res.sendfile(__dirname + '/app/index.html');
-  userDefinedTwitterSearch = req.query.ts;
 });
 
-// view engine setup
+function handleNewAppRequest( query ) {
+  recreateTwitterStream(query || twitterStreamTrackingString);
+}
 
+
+function randomString(length=4, chars='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') {
+  var result = '';
+  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
+}
+
+// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
@@ -102,22 +119,41 @@ app.set('port', process.env.PORT || 3000);
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-let connections = [];
+let connections = {clients:[], remotes:[]};
+let remoteChannel = io.of('/remote' );
 
-io.on('connection', function (socket) {
-  console.log('a user connected - ' + socket.id);
-  // console.log(socket)
-  connections = [socket.id];
-  var clients = io.sockets.clients();
+// track remote connections
+remoteChannel.on( 'connection', (socket) => {
+  console.log( '----- A Remote client connected -----' );
+  let uid = randomString(4);
+  connections.remotes.push({uid, socket});
+  console.log(connections)
+  socket.on( 'orientation', function(orientation) {
+    io.emit( 'orientation', orientation);
+  });
 
-  // for (var idKey in clients.connected) {
-  //   if( idKey !== socket.id){
-  //     console.log( 'idKey:'+idKey+ "   socket.id:"+socket.id)
-  //     clients.connected[idKey].disconnect();
-  //   }
-  // }
-  
-  // socket.emit('news', { hello: 'world' });
+  socket.on( 'remoteMessage', function(data) {
+    io.emit( 'remoteMessage', data);
+  });
+
+  socket.on( 'screenrotation', function(orientation) {
+    io.emit( 'screenrotation', orientation);
+  });
+
+})
+
+let clientChannel = io.of('/client' );
+
+// io.on('connection', function (socket) {
+clientChannel.on('connection', function (socket) {
+  let uid = randomString(4);
+  connections.clients.push({uid, socket});
+  console.log(connections)
+  console.log(`### NEW CLIENT CONNECTION **socketId=${socket.id} **uid:${uid}`);
+  handleNewAppRequest(userDefinedTwitterSearch);
+  socket.emit('chat message', 'CONNECTION SUCCESSFUL');
+  // var clients = io.sockets.clients();
+
     socket.on('my other event', function (data) {
       console.log(data.text);
     });
@@ -130,21 +166,9 @@ io.on('connection', function (socket) {
       io.emit('chat message', msg);
     });
 
-    socket.on( 'orientation', function(orientation) {
-      io.emit( 'orientation', orientation);
-    });
-
-    socket.on( 'remoteMessage', function(data) {
-      io.emit( 'remoteMessage', data);
-    });
-
-    socket.on( 'screenrotation', function(orientation) {
-      io.emit( 'screenrotation', orientation);
-    });
-
     var params = {
       screen_name: 'CPyvr',
-      q: 'creative pulse #CPyvr OR #creativepulse from:CPyvr to:CPyvr @CPyvr since:2012-01-01',
+      q: 'creative pulse #CPyvr OR #creativepulse OR #CPshowcase from:CPyvr to:CPyvr @CPyvr since:2012-01-01',
       count: 20,
       include_entities: true,
     };
@@ -155,14 +179,12 @@ io.on('connection', function (socket) {
 
       client.get('/search/tweets', params, (error, tweets, response)=>{
         if(!error && Array.isArray(tweets) && tweets.length){
-          tweets.map((t)=> console.log(t.text ))
-          io.emit('twitter', JSON.stringify(tweets));
+          socket.emit('twitter', JSON.stringify(tweets));
         }
         else if( ! tweets.length ) {
           client.get('statuses/user_timeline', params, (error, tweets, response)=>{
             if(!error && Array.isArray(tweets) && tweets.length){
-              tweets.map((t)=> console.log(t.text ))
-              io.emit('twitter', JSON.stringify(tweets)); 
+              socket.emit('twitter', JSON.stringify(tweets)); 
             }
           })
         }
@@ -179,16 +201,23 @@ var client = new Twitter({
     access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
 
-  var stream = client.stream('statuses/filter', {track: 'CPyvr'});
+var stream;
+function recreateTwitterStream( searchTerm ) {
+
+  console.log( `MAKING TWITTER stream with: ${searchTerm}` );
+  var stream = client.stream('statuses/filter', {track: searchTerm});
   stream.on('data', function(event) {
     console.log(event.text);
     io.emit('twitter', JSON.stringify(event));
- });
-
+  });
+  
   stream.on('error', function(error) {
     console.log( error );
     // throw error;
   });
+
+}
+
 
 server.listen(app.get('port'));
 
