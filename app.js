@@ -124,13 +124,13 @@ let remoteChannel = io.of('/remote' );
 
 // track remote connections
 remoteChannel.on( 'connection', (socket) => {
-  connections.remotes.map((item) => item.socket.disconnect(true))
+  // connections.remotes.map((item) => item.socket.disconnect(true))
 
   console.log( '----- A Remote client connected -----' );
   let uid = randomString(4);
   // connections.remotes.push({uid, socket});
   connections.remotes = [{uid, socket}];
-  console.log(connections)
+
   socket.on( 'orientation', function(orientation) {
     clientChannel.emit( 'orientation', orientation);
   });
