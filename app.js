@@ -129,15 +129,15 @@ remoteChannel.on( 'connection', (socket) => {
   connections.remotes.push({uid, socket});
   console.log(connections)
   socket.on( 'orientation', function(orientation) {
-    io.emit( 'orientation', orientation);
+    clientChannel.emit( 'orientation', orientation);
   });
 
   socket.on( 'remoteMessage', function(data) {
-    io.emit( 'remoteMessage', data);
+    clientChannel.emit( 'remoteMessage', data);
   });
 
   socket.on( 'screenrotation', function(orientation) {
-    io.emit( 'screenrotation', orientation);
+    clientChannel.emit( 'screenrotation', orientation);
   });
 
 })
@@ -151,19 +151,19 @@ clientChannel.on('connection', function (socket) {
   console.log(connections)
   console.log(`### NEW CLIENT CONNECTION **socketId=${socket.id} **uid:${uid}`);
   handleNewAppRequest(userDefinedTwitterSearch);
-  socket.emit('chat message', 'CONNECTION SUCCESSFUL');
-  // var clients = io.sockets.clients();
+  clientChannel.emit('chat message', 'CONNECTION SUCCESSFUL');
 
     socket.on('my other event', function (data) {
       console.log(data.text);
     });
     socket.on('disconnect', function(){
+      clientChannel.emit( 'stats', JSON.stringify(connections))
       console.log('user disconnected');
     });
 
     socket.on('chat message', function(msg){
       console.log('message: ' + msg);
-      io.emit('chat message', msg);
+      clientChannel.emit('chat message', msg);
     });
 
     var params = {
@@ -179,12 +179,12 @@ clientChannel.on('connection', function (socket) {
 
       client.get('/search/tweets', params, (error, tweets, response)=>{
         if(!error && Array.isArray(tweets) && tweets.length){
-          socket.emit('twitter', JSON.stringify(tweets));
+          clientChannel.emit('twitter', JSON.stringify(tweets));
         }
         else if( ! tweets.length ) {
           client.get('statuses/user_timeline', params, (error, tweets, response)=>{
             if(!error && Array.isArray(tweets) && tweets.length){
-              socket.emit('twitter', JSON.stringify(tweets)); 
+              clientChannel.emit('twitter', JSON.stringify(tweets)); 
             }
           })
         }
@@ -208,7 +208,7 @@ function recreateTwitterStream( searchTerm ) {
   var stream = client.stream('statuses/filter', {track: searchTerm});
   stream.on('data', function(event) {
     console.log(event.text);
-    io.emit('twitter', JSON.stringify(event));
+    clientChannel.emit('twitter', JSON.stringify(event));
   });
   
   stream.on('error', function(error) {
