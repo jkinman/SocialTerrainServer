@@ -124,7 +124,7 @@ let remoteChannel = io.of('/remote' );
 
 // track remote connections
 remoteChannel.on( 'connection', (socket) => {
-  // connections.remotes.map((item) => item.socket.disconnect(true))
+  connections.remotes.map((item) => item.socket.disconnect(true))
 
   console.log( '----- A Remote client connected -----' );
   let uid = randomString(4);
