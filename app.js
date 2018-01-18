@@ -117,16 +117,19 @@ app.set('port', process.env.PORT || 3000);
 
 // setup sockets 
 var server = require('http').Server(app);
-var io = require('socket.io')(server);
+var io = require('socket.io')(server,{ origins: '*:*'});
 
 let connections = {clients:[], remotes:[]};
 let remoteChannel = io.of('/remote' );
 
 // track remote connections
 remoteChannel.on( 'connection', (socket) => {
+  connections.remotes.map((item) => item.socket.disconnect(true))
+
   console.log( '----- A Remote client connected -----' );
   let uid = randomString(4);
-  connections.remotes.push({uid, socket});
+  // connections.remotes.push({uid, socket});
+  connections.remotes = [{uid, socket}];
   console.log(connections)
   socket.on( 'orientation', function(orientation) {
     clientChannel.emit( 'orientation', orientation);
