@@ -143,6 +143,11 @@ remoteChannel.on( 'connection', (socket) => {
   socket.on( 'screenrotation', function(orientation) {
     clientChannel.emit( 'screenrotation', orientation);
   });
+  
+  socket.on('chat message', function(msg){
+    console.log('message: ' + msg);
+    clientChannel.emit('chat message', msg);
+  });
 
 })
 
@@ -172,7 +177,8 @@ clientChannel.on('connection', function (socket) {
 
     var params = {
       screen_name: 'CPyvr',
-      q: 'creative pulse #CPyvr OR #creativepulse OR #CPshowcase from:CPyvr to:CPyvr @CPyvr since:2012-01-01',
+      q: '#CPyvr OR #creativepulse OR #CPshowcase from:CPyvr to:CPyvr @CPyvr since:2012-01-01',
+      // q: 'creative pulse #CPyvr OR #creativepulse OR #CPshowcase from:CPyvr to:CPyvr @CPyvr since:2012-01-01',
       count: 20,
       include_entities: true,
     };
